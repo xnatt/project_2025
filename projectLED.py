@@ -9,6 +9,7 @@ right_button = Button(15)
 left_score = 0
 right_score = 0
 
+
 def pressed(button):
     global left_score, right_score, start_time
     end_time = time()
@@ -21,14 +22,19 @@ def pressed(button):
         right_score += 1
         print(f"{right_name} won! Score: {left_score} vs {right_score}")
         print(f"{right_name} used time: {elapsed_time:.2f} seconds")
+    print("准备进行下一轮游戏...")
 
-left_name = input("Left player name: ")
-right_name = input("Right player name: ")
 
+left_name = input("请输入左边玩家的名字: ")
+right_name = input("请输入右边玩家的名字: ")
+
+round_num = 1
 while True:
+    print(f"第{round_num}轮游戏开始！")
     led.on()
     start_time = time()
     sleep(uniform(5, 10))
     led.off()
     left_button.when_pressed = pressed
     right_button.when_pressed = pressed
+    round_num += 1
