@@ -2,11 +2,12 @@ from gpiozero import LED, Button
 from time import sleep, time
 from random import uniform
 
-
 led = LED(4)
 left_button = Button(14)
 right_button = Button(15)
 
+left_score = 0
+right_score = 0
 
 def pressed(button):
     global left_score, right_score, start_time
@@ -21,12 +22,8 @@ def pressed(button):
         print(f"{right_name} won! Score: {left_score} vs {right_score}")
         print(f"{right_name} used time: {elapsed_time:.2f} seconds")
 
-
 left_name = input("Left player name: ")
 right_name = input("Right player name: ")
-
-left_score = 0
-right_score = 0
 
 while True:
     led.on()
