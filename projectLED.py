@@ -10,6 +10,7 @@ def play_game():
     right_score = 0
 
     def pressed(button):
+        print("Button pressed!")
         nonlocal left_score, right_score, start_time, left_time, right_time
         end_time = time()
         elapsed_time = end_time - start_time
@@ -73,4 +74,5 @@ def play_game():
                 break
 
 if __name__ == "__main__":
-    play_game()    
+    play_game()
+    
