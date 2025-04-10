@@ -24,12 +24,12 @@ def play_game():
             print(f"{right_name} used time: {elapsed_time:.2f} seconds")
 
 
-    left_name = input("请输入左边玩家的名字: ")
-    right_name = input("请输入右边玩家的名字: ")
-    rounds = int(input("请输入游戏总轮数: "))
+    left_name = input("left name: ")
+    right_name = input("right name: ")
+    rounds = int(input("Please enter the total number of rounds in the game: "))
 
     for round_num in range(1, rounds + 1):
-        print(f"第{round_num}轮游戏开始！")
+        print(f"the {round_num} round of the game begins！")
         led.on()
         start_time = time()
         sleep(uniform(5, 10))
@@ -37,14 +37,14 @@ def play_game():
         left_button.when_pressed = pressed
         right_button.when_pressed = pressed
 
-        # 等待按钮按下
+        
         while True:
             if left_button.is_pressed or right_button.is_pressed:
                 break
             sleep(0.1)
 
         if round_num < rounds:
-            next_round = input("是否进行下一轮游戏？(y/n): ")
+            next_round = input("Do you want to proceed to the next round of the game?(y/n): ")
             if next_round.lower() != 'y':
                 break
 
