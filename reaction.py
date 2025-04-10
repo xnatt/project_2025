@@ -19,12 +19,18 @@ def game_loop():
         if left_button.is_pressed or right_button.is_pressed:
             return
 
+# 修改部分（第23-28行）
+left_score = 0
+right_score = 0
+
 def pressed(button):
+    global left_score, right_score
     if button.pin.number == 14:
-        print(f"{left_name} wins!")
+        print(f"{left_name} wins this round!")
+        left_score += 1
     else:
-        print(f"{right_name} wins!")
-    exit()
+        print(f"{right_name} wins this round!")
+        right_score += 1
 
 left_button.when_pressed = pressed
 right_button.when_pressed = pressed
