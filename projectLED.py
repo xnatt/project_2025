@@ -2,7 +2,6 @@ from gpiozero import LED, Button
 from time import sleep, time
 from random import uniform
 
-
 def play_game():
     led = LED(4)
     left_button = Button(14)
@@ -46,15 +45,32 @@ def play_game():
         left_button.when_pressed = pressed
         right_button.when_pressed = pressed
 
-        while left_time is None or right_time is None:
+        timeout = 10  # 设置超时时间为 10 秒
+        end_time = start_time + timeout
+        while time() < end_time:
+            if left_time is not None and right_time is not None:
+                break
             sleep(0.1)
+
+        # 如果超时仍有玩家未按下按钮
+        if left_time is None:
+            right_score += 1
+            print(f"{right_name} won by default! Score: {left_score} vs {right_score}")
+            left_time = timeout
+            right_time = right_time if right_time is not None else timeout
+        elif right_time is None:
+            left_score += 1
+            print(f"{left_name} won by default! Score: {left_score} vs {right_score}")
+            right_time = timeout
+            left_time = left_time if left_time is not None else timeout
+
+        print(f"{left_name} used time: {left_time:.2f} seconds")
+        print(f"{right_name} used time: {right_time:.2f} seconds")
 
         if round_num < rounds:
             next_round = input("Do you want to proceed to the next round of the game?(y/n): ")
             if next_round.lower() != 'y':
                 break
 
-
 if __name__ == "__main__":
-    play_game()
-    
+    play_game()    
