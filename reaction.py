@@ -1,32 +1,89 @@
 from gpiozero import LED, Button
-from time import sleep
+from time import sleep, time
 from random import uniform
 
-led = LED(4)
-left_button = Button(14)  # Button on GPIO14
-right_button = Button(15)  # Button on GPIO15
+def play_game():
+    # Initialize GPIO components
+    led = LED(4)
+    left_button = Button(14)
+    right_button = Button(15)
+    left_score = 0
+    right_score = 0
 
-left_name = input("Enter left player name: ")
-right_name = input("Enter right player name: ")
+    def pressed(button):
+        """Handle button press events and calculate reaction times"""
+        print("Button pressed!")
+        nonlocal left_score, right_score, start_time, left_time, right_time
+        end_time = time()
+        elapsed_time = end_time - start_time
+        
+        # Record reaction time based on which button was pressed
+        if button.pin.number == 14:
+            left_time = elapsed_time
+        else:
+            right_time = elapsed_time
 
-game_active = False
+        # Compare reaction times when both players have responded
+        if left_time is not None and right_time is not None:
+            if left_time < right_time:
+                left_score += 1
+                print(f"{left_name} won! Score: {left_score} vs {right_score}")
+            elif right_time < left_time:
+                right_score += 1
+                print(f"{right_name} won! Score: {left_score} vs {right_score}")
+            else:
+                print("It's a tie!")
+            print(f"{left_name} used time: {left_time:.2f} seconds")
+            print(f"{right_name} used time: {right_time:.2f} seconds")
 
-def pressed(button):
-    global game_active
-    if game_active:
-        winner = left_name if button.pin.number == 14 else right_name
-        print(f"{winner} wins this round!")
-        game_active = False  # Reset for next round
+    # Get player information
+    left_name = input("left name: ")
+    right_name = input("right name: ")
+    rounds = int(input("Please enter the total number of rounds in the game: "))
 
-left_button.when_pressed = pressed
-right_button.when_pressed = pressed
+    # Main game loop
+    for round_num in range(1, rounds + 1):
+        print(f"the {round_num} round of the game begins！")
+        led.on()
+        sleep(uniform(5, 10))  # Random delay before turning off LED
+        led.off()
+        
+        # Initialize timing variables
+        start_time = time()
+        left_time = None
+        right_time = None
+        left_button.when_pressed = pressed
+        right_button.when_pressed = pressed
 
-while True:
-    game_active = True
-    led.on()
-    sleep(uniform(5, 10))
-    led.off()
-    
-    # Wait for a button press to start the next round
-    while game_active:
-        sleep(0.1)
+        # Set timeout for player response
+        timeout = 10
+        end_time = start_time + timeout
+        while time() < end_time:
+            if left_time is not None and right_time is not None:
+                break
+            sleep(0.1)
+
+        # Handle timeout scenarios
+        if left_time is None:
+            right_score += 1
+            print(f"{right_name} won by default! Score: {left_score} vs {right_score}")
+            left_time = timeout
+            right_time = right_time if right_time is not None else timeout
+        elif right_time is None:
+            left_score += 1
+            print(f"{left_name} won by default! Score: {left_score} vs {right_score}")
+            right_time = timeout
+            left_time = left_time if left_time is not None else timeout
+
+        print(f"{left_name} used time: {left_time:.2f} seconds")
+        print(f"{right_name} used time: {right_time:.2f} seconds")
+
+        # Check if user wants to continue to next round
+        if round_num < rounds:
+            next_round = input("Do you want to proceed to the next round of the game?(y/n): ")
+            if next_round.lower() != 'y':
+                break
+
+if __name__ == "__main__":
+    # Start the game when script is executed
+    play_game()
