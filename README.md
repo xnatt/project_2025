@@ -1,1 +1,1 @@
-# projrct_2025
+# project_2025
