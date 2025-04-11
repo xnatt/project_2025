@@ -9,16 +9,24 @@ right_button = Button(15)  # Button on GPIO15
 left_name = input("Enter left player name: ")
 right_name = input("Enter right player name: ")
 
-def pressed(button):
-    if button.pin.number == 14:
-        print(f"{left_name} won!")
-    else:
-        print(f"{right_name} won!")
-    exit()  # Exit after a button is pressed
+game_active = False
 
-led.on()
-sleep(uniform(5, 10))
-led.off()
+def pressed(button):
+    global game_active
+    if game_active:
+        winner = left_name if button.pin.number == 14 else right_name
+        print(f"{winner} wins this round!")
+        game_active = False  # Reset for next round
 
 left_button.when_pressed = pressed
 right_button.when_pressed = pressed
+
+while True:
+    game_active = True
+    led.on()
+    sleep(uniform(5, 10))
+    led.off()
+    
+    # Wait for a button press to start the next round
+    while game_active:
+        sleep(0.1)
